@@ -41,18 +41,17 @@ fn handle_input(
             target_pos = Some(*grid_pos);
         }
 
-        if mouse_input.just_pressed(MouseButton::Left) {
-            if let Ok(window) = windows.get_single() {
-                if let Some(cursor_position) = window.cursor_position() {
-                    let world_x = cursor_position.x - window.width() / 2.0;
-                    let world_y = -(cursor_position.y - window.height() / 2.0);
-                    
-                    grid_pos.x = (world_x / 32.0).round() as i32;
-                    grid_pos.y = (world_y / 32.0).round() as i32;
-                    clicked = true;
-                    target_pos = Some(*grid_pos);
-                }
-            }
+        if mouse_input.just_pressed(MouseButton::Left)
+            && let Ok(window) = windows.get_single()
+            && let Some(cursor_position) = window.cursor_position()
+        {
+            let world_x = cursor_position.x - window.width() / 2.0;
+            let world_y = -(cursor_position.y - window.height() / 2.0);
+            
+            grid_pos.x = (world_x / 32.0).round() as i32;
+            grid_pos.y = (world_y / 32.0).round() as i32;
+            clicked = true;
+            target_pos = Some(*grid_pos);
         }
     }
     
@@ -61,15 +60,13 @@ fn handle_input(
         return;
     }
 
-    if clicked {
-        if let Some(target) = target_pos {
-            match turn_phase.get() {
-                TurnPhase::SelectUnit => {
-                    queue.outgoing.push_back(GameCommand::SelectUnit { target });
-                }
-                TurnPhase::ChooseAction => {
-                    queue.outgoing.push_back(GameCommand::MoveUnit { destination: target });
-                }
+    if clicked && let Some(target) = target_pos {
+        match turn_phase.get() {
+            TurnPhase::SelectUnit => {
+                queue.outgoing.push_back(GameCommand::SelectUnit { target });
+            }
+            TurnPhase::ChooseAction => {
+                queue.outgoing.push_back(GameCommand::MoveUnit { destination: target });
             }
         }
     }

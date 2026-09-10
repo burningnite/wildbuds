@@ -1,6 +1,6 @@
 use bevy::prelude::*;
-use crate::commands::{CommandQueue, GameCommand, NetworkCommand};
-use crate::state::{TurnState, TurnPhase, AppState, Player};
+use crate::commands::{CommandQueue, GameCommand};
+use crate::state::{TurnState, TurnPhase, AppState};
 use crate::components::{GridPosition, Owner};
 
 pub struct GameLogicPlugin;
@@ -69,5 +69,58 @@ fn resolve_commands(
                 next_phase.set(TurnPhase::SelectUnit);
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::state::Player;
+    use crate::commands::NetworkCommand;
+    use crate::components::{GridPosition, Owner};
+
+    fn setup_test_app() -> App {
+        let mut app = App::new();
+        app.add_plugins(MinimalPlugins);
+        app.add_plugins(bevy::state::app::StatesPlugin);
+        app.init_state::<AppState>();
+        app.init_state::<TurnPhase>();
+        app.init_resource::<CommandQueue>();
+        app.insert_resource(TurnState {
+            active_player: Player::One,
+            active_unit: None,
+            local_player: Player::One,
+        });
+        app.add_plugins(GameLogicPlugin);
+        app.world_mut().resource_mut::<NextState<AppState>>().set(AppState::InGame);
+        app.update(); app.update(); // transition
+        app
+    }
+
+    #[test]
+    fn test_select_unit_wrong_player() {
+        let mut app = setup_test_app();
+        app.world_mut().spawn((GridPosition { x: 0, y: 0 }, Owner(Player::One)));
+        
+        app.world_mut().resource_mut::<CommandQueue>().incoming.push_back(NetworkCommand {
+            sender: Player::Two,
+            command: GameCommand::SelectUnit { target: GridPosition { x: 0, y: 0 } },
+        });
+        app.update(); app.update();
+        assert_eq!(app.world().resource::<TurnState>().active_unit, None);
+    }
+
+    #[test]
+    fn test_select_unit_valid() {
+        let mut app = setup_test_app();
+        let unit_id = app.world_mut().spawn((GridPosition { x: 0, y: 0 }, Owner(Player::One))).id();
+        
+        app.world_mut().resource_mut::<CommandQueue>().incoming.push_back(NetworkCommand {
+            sender: Player::One,
+            command: GameCommand::SelectUnit { target: GridPosition { x: 0, y: 0 } },
+        });
+        app.update(); app.update();
+        assert_eq!(app.world().resource::<TurnState>().active_unit, Some(unit_id));
+        assert_eq!(*app.world().resource::<State<TurnPhase>>().get(), TurnPhase::ChooseAction);
     }
 }

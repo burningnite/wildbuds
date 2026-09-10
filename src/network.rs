@@ -44,7 +44,7 @@ fn process_connections(
     }
     
     let connected_peers: Vec<_> = socket.connected_peers().collect();
-    if connected_peers.len() >= 1 {
+    if !connected_peers.is_empty() {
         let my_id = socket.id().unwrap().to_string();
         let their_id = connected_peers[0].to_string();
         
