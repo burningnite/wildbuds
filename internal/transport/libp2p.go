@@ -60,6 +60,7 @@ func NewLibp2pTransport() (*Libp2pTransport, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to create libp2p host: %w", err)
 	}
+	fmt.Printf("[Libp2p] Host started with ID: %s, Addrs: %v\n", h.ID().String(), h.Addrs())
 
 	t := &Libp2pTransport{
 		host:         h,
@@ -77,6 +78,9 @@ func NewLibp2pTransport() (*Libp2pTransport, error) {
 	// Setup mDNS discovery service
 	notifee := &mdnsNotifee{t: t}
 	mdnsSvc := mdns.NewMdnsService(h, RendezvousString, notifee)
+	if err := mdnsSvc.Start(); err != nil {
+		fmt.Printf("[Libp2p] WARNING: failed to start mDNS service: %v\n", err)
+	}
 	t.mdnsService = mdnsSvc
 
 	return t, nil
@@ -87,6 +91,8 @@ func (t *Libp2pTransport) handlePeerFound(pi peer.AddrInfo) {
 		return
 	}
 
+	fmt.Printf("[Libp2p] Discovered peer: %s\n", pi.ID.String())
+
 	t.mu.RLock()
 	if t.connected || t.closed {
 		t.mu.RUnlock()
@@ -95,6 +101,7 @@ func (t *Libp2pTransport) handlePeerFound(pi peer.AddrInfo) {
 	t.mu.RUnlock()
 
 	go func() {
+		fmt.Printf("[Libp2p] Attempting to connect to: %s\n", pi.ID.String())
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
@@ -120,6 +127,7 @@ func (t *Libp2pTransport) handlePeerFound(pi peer.AddrInfo) {
 
 func (t *Libp2pTransport) handleIncomingStream(stream network.Stream) {
 	remotePeer := stream.Conn().RemotePeer()
+	fmt.Printf("[Libp2p] Incoming stream from: %s\n", remotePeer.String())
 
 	t.mu.Lock()
 	if t.connected || t.closed {
@@ -157,6 +165,7 @@ func (t *Libp2pTransport) setupStream(stream network.Stream, remotePeer peer.ID)
 	t.connected = true
 	t.mu.Unlock()
 
+	fmt.Printf("[Libp2p] Stream fully established with %s. We are %v\n", rp, lp)
 	go t.readLoop(stream, rp)
 }
 
