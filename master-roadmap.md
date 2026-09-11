@@ -16,7 +16,7 @@ For detailed, step-by-step tasks, refer to the individual milestone roadmaps.
 - [x] **[M5: Application Integration & Game Loop](./M5-roadmap.md)**
 - [x] **[M5b: Application Scenes & Start Menu](./M5b-roadmap.md)**
 - [x] **[M5c: Localization & Fonts](./M5c-roadmap.md)**
-- [ ] **[M6: E2E Verification & Adversarial Hardening](./M6-roadmap.md)**
+- [x] **[M6: E2E Verification & Adversarial Hardening](./M6-roadmap.md)**
 
 ## Phase 3: Future Enhancements (Planned)
 - [ ] **[M7: P2P Networking (WebRTC)](./M7-roadmap.md)**
