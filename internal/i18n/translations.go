@@ -13,7 +13,8 @@ var Dictionary = map[string]map[string]string{
 		"debugger_title": "Debugger: Render/Control Tests",
 		"quit":           "Quit",
 		"back":           "Back",
-		"lang_menu":      "L",
+		"back_symbol":    "\uf060", // Nerd Font Back Arrow
+		"lang_menu":      "\uf0ac", // Nerd Font Globe
 	},
 	"Español": {
 		"spar":           "Entrenar",
@@ -25,7 +26,8 @@ var Dictionary = map[string]map[string]string{
 		"debugger_title": "Depurador: Pruebas de Renderizado/Control",
 		"quit":           "Salir",
 		"back":           "Atrás",
-		"lang_menu":      "L",
+		"back_symbol":    "\uf060", // Nerd Font Back Arrow
+		"lang_menu":      "\uf0ac", // Nerd Font Globe
 	},
 }
 

@@ -27,9 +27,9 @@ type DebuggerScene struct {
 func NewDebuggerScene() *DebuggerScene {
 	return &DebuggerScene{
 		backBtnX: 20,
-		backBtnY: 50,
-		backBtnW: 80,
-		backBtnH: 30,
+		backBtnY: 540,
+		backBtnW: 40,
+		backBtnH: 40,
 	}
 }
 
@@ -73,7 +73,7 @@ func (s *DebuggerScene) Draw(screen *ebiten.Image) {
 	)
 
 	// Render "Back" button label centered inside the button
-	btnText := i18n.Get("back")
+	btnText := i18n.Get("back_symbol")
 	w, h := text.Measure(btnText, font20, 0)
 	textX := float64(s.backBtnX) + (float64(s.backBtnW)-w)/2
 	textY := float64(s.backBtnY) + (float64(s.backBtnH)-h)/2

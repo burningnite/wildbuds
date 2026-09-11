@@ -30,6 +30,8 @@ func (b *langButton) contains(x, y int) bool {
 type LanguageScene struct {
 	buttons    []langButton
 	hoveredIdx int
+	backBtn    langButton
+	backHover  bool
 }
 
 // NewLanguageScene initializes the language scene with two columns of language buttons centered on 800x600.
@@ -77,6 +79,13 @@ func NewLanguageScene() *LanguageScene {
 	return &LanguageScene{
 		buttons:    buttons,
 		hoveredIdx: -1,
+		backBtn: langButton{
+			label: i18n.Get("back_symbol"),
+			x:     20,
+			y:     540,
+			w:     40,
+			h:     40,
+		},
 	}
 }
 
@@ -92,10 +101,17 @@ func (s *LanguageScene) Update() (Transition, error) {
 		}
 	}
 
-	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) && s.hoveredIdx >= 0 {
-		clicked := s.buttons[s.hoveredIdx].label
-		i18n.CurrentLanguage = clicked
-		return Transition{NextScene: NewStartMenuScene()}, nil
+	s.backHover = s.backBtn.contains(mx, my)
+
+	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+		if s.hoveredIdx >= 0 {
+			clicked := s.buttons[s.hoveredIdx].label
+			i18n.CurrentLanguage = clicked
+			return Transition{NextScene: NewStartMenuScene()}, nil
+		}
+		if s.backHover {
+			return Transition{NextScene: NewStartMenuScene()}, nil
+		}
 	}
 
 	return Transition{}, nil
@@ -108,23 +124,29 @@ func (s *LanguageScene) Draw(screen *ebiten.Image) {
 
 	for i, btn := range s.buttons {
 		isHovered := i == s.hoveredIdx
-
-		bgColor := color.RGBA{R: 45, G: 52, B: 68, A: 255}
-		borderColor := color.RGBA{R: 70, G: 80, B: 100, A: 255}
-		if isHovered {
-			bgColor = color.RGBA{R: 70, G: 95, B: 130, A: 255}
-			borderColor = color.RGBA{R: 120, G: 160, B: 220, A: 255}
-		}
-
-		vector.DrawFilledRect(screen, float32(btn.x), float32(btn.y), float32(btn.w), float32(btn.h), bgColor, false)
-		vector.StrokeRect(screen, float32(btn.x), float32(btn.y), float32(btn.w), float32(btn.h), 1.5, borderColor, false)
-
-		op := &text.DrawOptions{}
-		op.GeoM.Translate(float64(btn.x)+float64(btn.w)/2, float64(btn.y)+float64(btn.h)/2)
-		op.PrimaryAlign = text.AlignCenter
-		op.SecondaryAlign = text.AlignCenter
-		op.ColorScale.ScaleWithColor(color.White)
-
-		text.Draw(screen, btn.label, assets.GetFont(16), op)
+		s.drawButton(screen, btn, isHovered)
 	}
+
+	// Draw back button
+	s.drawButton(screen, s.backBtn, s.backHover)
+}
+
+func (s *LanguageScene) drawButton(screen *ebiten.Image, btn langButton, isHovered bool) {
+	bgColor := color.RGBA{R: 45, G: 52, B: 68, A: 255}
+	borderColor := color.RGBA{R: 70, G: 80, B: 100, A: 255}
+	if isHovered {
+		bgColor = color.RGBA{R: 70, G: 95, B: 130, A: 255}
+		borderColor = color.RGBA{R: 120, G: 160, B: 220, A: 255}
+	}
+
+	vector.DrawFilledRect(screen, float32(btn.x), float32(btn.y), float32(btn.w), float32(btn.h), bgColor, false)
+	vector.StrokeRect(screen, float32(btn.x), float32(btn.y), float32(btn.w), float32(btn.h), 1.5, borderColor, false)
+
+	op := &text.DrawOptions{}
+	op.GeoM.Translate(float64(btn.x)+float64(btn.w)/2, float64(btn.y)+float64(btn.h)/2)
+	op.PrimaryAlign = text.AlignCenter
+	op.SecondaryAlign = text.AlignCenter
+	op.ColorScale.ScaleWithColor(color.White)
+
+	text.Draw(screen, btn.label, assets.GetFont(16), op)
 }
