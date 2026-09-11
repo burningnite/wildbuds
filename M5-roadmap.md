@@ -1,5 +1,5 @@
 # M5: Application Integration & Game Loop Roadmap
-*Status: PLANNED*
+*Status: COMPLETED*
 
 ## 1. Game Struct Definition
 - [ ] Create `internal/app/game.go`.

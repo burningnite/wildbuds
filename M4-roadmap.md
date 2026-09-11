@@ -1,5 +1,5 @@
 # M4: Ebitengine Renderer & Input Handler Roadmap
-*Status: PLANNED*
+*Status: COMPLETED*
 
 ## 1. Camera & Coordinate Systems
 - [ ] Create `internal/render/camera.go`.
