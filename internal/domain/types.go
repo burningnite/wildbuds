@@ -223,3 +223,11 @@ func InGridBounds(pos GridPosition) bool {
 
 // UnitID is a unique identifier for a unit.
 type UnitID int
+
+// NetworkCommand represents a network packet containing a sender and an arbitrary payload.
+type NetworkCommand struct {
+	Sender  Player
+	Payload interface{}
+}
+
+
