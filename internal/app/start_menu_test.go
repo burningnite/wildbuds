@@ -125,8 +125,8 @@ func TestStartMenuScene_Transitions(t *testing.T) {
 	if tr.NextScene == nil {
 		t.Fatalf("expected Duel transition to have non-nil NextScene")
 	}
-	if _, ok := tr.NextScene.(*BattleScene); !ok {
-		t.Errorf("expected Duel NextScene to be *BattleScene, got %T", tr.NextScene)
+	if _, ok := tr.NextScene.(*LobbyScene); !ok {
+		t.Errorf("expected Duel NextScene to be *LobbyScene, got %T", tr.NextScene)
 	}
 
 	// Debugger

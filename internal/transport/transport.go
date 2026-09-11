@@ -63,6 +63,9 @@ type Transport interface {
 
 	// IsClosed returns true if the transport has been closed.
 	IsClosed() bool
+
+	// IsConnected returns true if the transport has an active connection with a peer.
+	IsConnected() bool
 }
 
 // PollingTransport is an interface extension for game engines like Ebitengine

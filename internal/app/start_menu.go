@@ -120,9 +120,18 @@ func (s *StartMenuScene) handleAction(label string) (Transition, error) {
 	switch label {
 	case i18n.Get("quit"), "Quit", "quit":
 		return Transition{Quit: true}, nil
-	case i18n.Get("spar"), i18n.Get("duel"), "Spar", "Duel":
-		battle, _ := NewBattleScene()
+	case i18n.Get("spar"), "Spar":
+		battle, err := NewBattleScene(nil)
+		if err != nil {
+			return Transition{}, err
+		}
 		return Transition{NextScene: battle}, nil
+	case i18n.Get("duel"), "Duel":
+		lobby, err := NewLobbyScene()
+		if err != nil {
+			return Transition{}, err
+		}
+		return Transition{NextScene: lobby}, nil
 	case i18n.Get("debugger"), "Debugger", "debugger":
 		debug := NewDebuggerScene()
 		return Transition{NextScene: debug}, nil

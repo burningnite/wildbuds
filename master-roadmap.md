@@ -19,7 +19,7 @@ For detailed, step-by-step tasks, refer to the individual milestone roadmaps.
 - [x] **[M6: E2E Verification & Adversarial Hardening](./M6-roadmap.md)**
 
 ## Phase 3: Future Enhancements (Planned)
-- [ ] **[M7: P2P Networking (WebRTC)](./M7-roadmap.md)**
+- [x] **[M7: P2P Networking (go-libp2p)](./M7-roadmap.md)**
 - [ ] **[M8: Asset & Sprite Integration](./M8-roadmap.md)**
 - [ ] **[M9: User Interface & User Experience](./M9-roadmap.md)**
 - [ ] **[M10: Audio System](./M10-roadmap.md)**

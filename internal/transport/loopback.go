@@ -310,6 +310,13 @@ func (lt *LoopbackTransport) IsClosed() bool {
 	return lt.isClosed
 }
 
+// IsConnected returns true if the transport has an active connection with a peer.
+func (lt *LoopbackTransport) IsConnected() bool {
+	lt.mu.RLock()
+	defer lt.mu.RUnlock()
+	return !lt.isClosed
+}
+
 // Poll retrieves the next available NetworkCommand without blocking.
 // Returns (cmd, true) if an item was present, or (zero, false) otherwise.
 func (lt *LoopbackTransport) Poll() (commands.NetworkCommand, bool) {

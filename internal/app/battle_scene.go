@@ -22,16 +22,22 @@ type BattleScene struct {
 }
 
 // NewBattleScene initializes the game mechanics and systems.
-func NewBattleScene() (*BattleScene, error) {
+func NewBattleScene(t transport.Transport) (*BattleScene, error) {
 	state := domain.NewInitialGameState()
 	queue := commands.NewCommandQueue()
-	
-	trans, err := transport.NewLoopback(
-		domain.PlayerOne,
-		transport.WithAutoPlayerToggle(true),
-	)
-	if err != nil {
-		return nil, err
+
+	var trans transport.Transport
+	var err error
+	if t != nil {
+		trans = t
+	} else {
+		trans, err = transport.NewLoopback(
+			domain.PlayerOne,
+			transport.WithAutoPlayerToggle(true),
+		)
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	camera := render.NewCamera(800, 600)
