@@ -240,6 +240,14 @@ func (t *Libp2pTransport) Send(cmd commands.GameCommand) error {
 		return fmt.Errorf("failed to write to stream: %w", err)
 	}
 
+	// Mirror the command locally so the local resolver processes our own actions
+	netCmd := commands.NewNetworkCommand(t.LocalPlayer(), cmd)
+	select {
+	case t.inCh <- netCmd:
+	default:
+		return ErrQueueFull
+	}
+
 	return nil
 }
 
