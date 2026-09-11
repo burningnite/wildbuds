@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
+	"wildbuds/internal/i18n"
 )
 
 func TestStartMenuScene_ImplementsScene(t *testing.T) {
@@ -14,13 +15,13 @@ func TestStartMenuScene_ImplementsScene(t *testing.T) {
 func TestStartMenuScene_Initialization(t *testing.T) {
 	menu := NewStartMenuScene()
 	expectedLabels := []string{
-		"Spar",
-		"Duel",
-		"Team Building",
-		"Profile",
-		"Options",
-		"Debugger",
-		"Quit",
+		i18n.Get("spar"),
+		i18n.Get("duel"),
+		i18n.Get("team_building"),
+		i18n.Get("profile"),
+		i18n.Get("options"),
+		i18n.Get("debugger"),
+		i18n.Get("quit"),
 	}
 
 	if len(menu.buttons) != len(expectedLabels) {
@@ -43,6 +44,14 @@ func TestStartMenuScene_Initialization(t *testing.T) {
 					i, i-1, prev.y+prev.h, curr.y)
 			}
 		}
+	}
+
+	// Check language menu button
+	if menu.langButton.x != 740 || menu.langButton.y != 540 || menu.langButton.w != 40 || menu.langButton.h != 40 {
+		t.Errorf("unexpected langButton dimensions/position: %+v", menu.langButton)
+	}
+	if menu.langButton.label != i18n.Get("lang_menu") {
+		t.Errorf("expected langButton label %q, got %q", i18n.Get("lang_menu"), menu.langButton.label)
 	}
 }
 
@@ -135,6 +144,18 @@ func TestStartMenuScene_Transitions(t *testing.T) {
 		t.Errorf("expected Debugger NextScene to be *DebuggerScene, got %T", tr.NextScene)
 	}
 
+	// Language menu transition
+	tr, err = menu.handleAction("lang_menu")
+	if err != nil {
+		t.Fatalf("unexpected error on lang_menu: %v", err)
+	}
+	if tr.NextScene == nil {
+		t.Fatalf("expected lang_menu transition to have non-nil NextScene")
+	}
+	if _, ok := tr.NextScene.(*LanguageScene); !ok {
+		t.Errorf("expected lang_menu NextScene to be *LanguageScene, got %T", tr.NextScene)
+	}
+
 	// Other buttons do nothing
 	noOpButtons := []string{"Team Building", "Profile", "Options", "Unknown"}
 	for _, btn := range noOpButtons {
@@ -154,13 +175,20 @@ func TestStartMenuScene_Draw(t *testing.T) {
 
 	// Test drawing with no hover
 	menu.hoveredIdx = -1
+	menu.langHovered = false
 	menu.Draw(screen)
 
 	// Test drawing with hover on each button
 	for i := range menu.buttons {
 		menu.hoveredIdx = i
+		menu.langHovered = false
 		menu.Draw(screen)
 	}
+
+	// Test drawing with hover on lang button
+	menu.hoveredIdx = -1
+	menu.langHovered = true
+	menu.Draw(screen)
 }
 
 func TestStartMenuScene_UpdateDefault(t *testing.T) {

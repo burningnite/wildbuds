@@ -15,6 +15,7 @@ For detailed, step-by-step tasks, refer to the individual milestone roadmaps.
 - [x] **[M4: Ebitengine Renderer & Input Handler](./M4-roadmap.md)**
 - [x] **[M5: Application Integration & Game Loop](./M5-roadmap.md)**
 - [x] **[M5b: Application Scenes & Start Menu](./M5b-roadmap.md)**
+- [x] **[M5c: Localization & Fonts](./M5c-roadmap.md)**
 - [ ] **[M6: E2E Verification & Adversarial Hardening](./M6-roadmap.md)**
 
 ## Phase 3: Future Enhancements (Planned)

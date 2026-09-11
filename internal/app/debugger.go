@@ -4,9 +4,11 @@ import (
 	"image/color"
 
 	"github.com/hajimehoshi/ebiten/v2"
-	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/hajimehoshi/ebiten/v2/inpututil"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
+	"wildbuds/internal/assets"
+	"wildbuds/internal/i18n"
 )
 
 var _ Scene = (*DebuggerScene)(nil)
@@ -48,7 +50,12 @@ func (s *DebuggerScene) Draw(screen *ebiten.Image) {
 	screen.Fill(color.RGBA{R: 20, G: 20, B: 24, A: 255})
 
 	// Render title
-	ebitenutil.DebugPrintAt(screen, "Debugger: Render/Control Tests", 20, 20)
+	font20 := assets.GetFont(20)
+	titleText := i18n.Get("debugger_title")
+	titleOpts := &text.DrawOptions{}
+	titleOpts.GeoM.Translate(20, 20)
+	titleOpts.ColorScale.ScaleWithColor(color.White)
+	text.Draw(screen, titleText, font20, titleOpts)
 
 	// Render "Back" button background
 	btnColor := color.RGBA{R: 60, G: 60, B: 70, A: 255}
@@ -66,10 +73,14 @@ func (s *DebuggerScene) Draw(screen *ebiten.Image) {
 	)
 
 	// Render "Back" button label centered inside the button
-	btnText := "Back"
-	textX := s.backBtnX + (s.backBtnW-len(btnText)*6)/2
-	textY := s.backBtnY + (s.backBtnH-16)/2
-	ebitenutil.DebugPrintAt(screen, btnText, textX, textY)
+	btnText := i18n.Get("back")
+	w, h := text.Measure(btnText, font20, 0)
+	textX := float64(s.backBtnX) + (float64(s.backBtnW)-w)/2
+	textY := float64(s.backBtnY) + (float64(s.backBtnH)-h)/2
+	btnOpts := &text.DrawOptions{}
+	btnOpts.GeoM.Translate(textX, textY)
+	btnOpts.ColorScale.ScaleWithColor(color.White)
+	text.Draw(screen, btnText, font20, btnOpts)
 }
 
 func (s *DebuggerScene) inBackBtn(x, y int) bool {
