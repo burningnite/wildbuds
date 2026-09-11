@@ -109,6 +109,15 @@ func (t *Libp2pTransport) handlePeerFound(pi peer.AddrInfo) {
 			return
 		}
 
+		localID := t.host.ID().String()
+		remoteID := pi.ID.String()
+
+		// To prevent both sides from opening a stream simultaneously and then closing each other's streams,
+		// we deterministically assign the dialing responsibility to only one peer.
+		if localID >= remoteID {
+			return
+		}
+
 		t.mu.Lock()
 		if t.connected || t.closed {
 			t.mu.Unlock()
