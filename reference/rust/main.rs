@@ -7,7 +7,13 @@ mod network;
 mod render;
 mod state;
 
-use bevy::prelude::*;
+use bevy::{
+    prelude::*,
+    render::{
+        settings::{Backends, RenderCreation, WgpuSettings},
+        RenderPlugin,
+    },
+};
 use commands::CommandQueue;
 use state::{AppState, TurnPhase};
 

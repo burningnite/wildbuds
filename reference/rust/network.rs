@@ -17,7 +17,8 @@ impl Plugin for NetworkPlugin {
 }
 
 fn setup_network(mut commands: Commands) {
-    let room_url = "ws://matchbox.machengine.org:3536/wildbuds";
+    // Switching to a local signaling server since the public one is failing to resolve
+    let room_url = "ws://127.0.0.1:3536/wildbuds";
     info!("connecting to matchbox server: {}", room_url);
     
     let (socket, message_loop) = WebRtcSocket::builder(room_url)
