@@ -6,87 +6,84 @@ import (
 	"strings"
 )
 
-// Element represents one of the 18 elemental types in Wildbuds,
-// mirroring the Rust enum in src/combat.rs.
+// Element represents one of the 10 elemental types in Wildbuds,
+// as defined in some-mechanics-table.md.
 type Element uint8
 
 const (
-	ElementNormal Element = iota
-	ElementFire
+	ElementBeast Element = iota
+	ElementFlora
 	ElementWater
-	ElementGrass
-	ElementElectric
-	ElementIce
-	ElementFighting
-	ElementPoison
-	ElementGround
-	ElementFlying
-	ElementPsychic
-	ElementBug
-	ElementRock
-	ElementGhost
-	ElementDragon
-	ElementDark
-	ElementSteel
-	ElementFairy
+	ElementFire
+	ElementEarth
+	ElementAir
+	ElementCold
+	ElementMetal
+	ElementVoid
+	ElementGleam
 )
 
-// NumElements is the total number of defined elemental types (18).
-const NumElements = 18
+// NumElements is the total number of defined elemental types (10).
+const NumElements = 10
 
-// Multiplier constants
-const (
-	MultiplierSelfResistance float32 = 0.5
-	MultiplierSuperEffective float32 = 2.0
-	MultiplierNeutral        float32 = 1.0
-)
-
-// IsValid reports whether the element is within the valid range [ElementNormal, ElementFairy].
+// IsValid reports whether the element is within the valid range [ElementBeast, ElementGleam].
 func (e Element) IsValid() bool {
-	return e <= ElementFairy
+	return e <= ElementGleam
 }
 
 // String returns the capitalized name of the element.
 func (e Element) String() string {
 	switch e {
-	case ElementNormal:
-		return "Normal"
-	case ElementFire:
-		return "Fire"
+	case ElementBeast:
+		return "Beast"
+	case ElementFlora:
+		return "Flora"
 	case ElementWater:
 		return "Water"
-	case ElementGrass:
-		return "Grass"
-	case ElementElectric:
-		return "Electric"
-	case ElementIce:
-		return "Ice"
-	case ElementFighting:
-		return "Fighting"
-	case ElementPoison:
-		return "Poison"
-	case ElementGround:
-		return "Ground"
-	case ElementFlying:
-		return "Flying"
-	case ElementPsychic:
-		return "Psychic"
-	case ElementBug:
-		return "Bug"
-	case ElementRock:
-		return "Rock"
-	case ElementGhost:
-		return "Ghost"
-	case ElementDragon:
-		return "Dragon"
-	case ElementDark:
-		return "Dark"
-	case ElementSteel:
-		return "Steel"
-	case ElementFairy:
-		return "Fairy"
+	case ElementFire:
+		return "Fire"
+	case ElementEarth:
+		return "Earth"
+	case ElementAir:
+		return "Air"
+	case ElementCold:
+		return "Cold"
+	case ElementMetal:
+		return "Metal"
+	case ElementVoid:
+		return "Void"
+	case ElementGleam:
+		return "Gleam"
 	default:
 		return fmt.Sprintf("Element(%d)", e)
+	}
+}
+
+// Symbol returns the Unicode glyph symbol associated with the element.
+func (e Element) Symbol() string {
+	switch e {
+	case ElementBeast:
+		return "𖢥"
+	case ElementFlora:
+		return "𖧷"
+	case ElementWater:
+		return "𖦹"
+	case ElementFire:
+		return "𖥳"
+	case ElementEarth:
+		return "𖣯"
+	case ElementAir:
+		return "𖣘"
+	case ElementCold:
+		return "𖥑"
+	case ElementMetal:
+		return "𖢒"
+	case ElementVoid:
+		return "𖡷"
+	case ElementGleam:
+		return "𖤓"
+	default:
+		return "?"
 	}
 }
 
@@ -125,73 +122,49 @@ func (e *Element) UnmarshalJSON(data []byte) error {
 // ParseElement parses a string into an Element (case-insensitive).
 func ParseElement(s string) (Element, error) {
 	switch strings.ToLower(strings.TrimSpace(s)) {
-	case "normal":
-		return ElementNormal, nil
-	case "fire":
-		return ElementFire, nil
+	case "beast":
+		return ElementBeast, nil
+	case "flora":
+		return ElementFlora, nil
 	case "water":
 		return ElementWater, nil
-	case "grass":
-		return ElementGrass, nil
-	case "electric":
-		return ElementElectric, nil
-	case "ice":
-		return ElementIce, nil
-	case "fighting":
-		return ElementFighting, nil
-	case "poison":
-		return ElementPoison, nil
-	case "ground":
-		return ElementGround, nil
-	case "flying":
-		return ElementFlying, nil
-	case "psychic":
-		return ElementPsychic, nil
-	case "bug":
-		return ElementBug, nil
-	case "rock":
-		return ElementRock, nil
-	case "ghost":
-		return ElementGhost, nil
-	case "dragon":
-		return ElementDragon, nil
-	case "dark":
-		return ElementDark, nil
-	case "steel":
-		return ElementSteel, nil
-	case "fairy":
-		return ElementFairy, nil
+	case "fire":
+		return ElementFire, nil
+	case "earth":
+		return ElementEarth, nil
+	case "air":
+		return ElementAir, nil
+	case "cold":
+		return ElementCold, nil
+	case "metal":
+		return ElementMetal, nil
+	case "void":
+		return ElementVoid, nil
+	case "gleam":
+		return ElementGleam, nil
 	default:
 		return 0, fmt.Errorf("unknown element: %q", s)
 	}
 }
 
-// AllElements returns a slice of all 18 valid elements in canonical index order.
+// AllElements returns a slice of all 10 valid elements in canonical index order.
 func AllElements() []Element {
 	return []Element{
-		ElementNormal,
-		ElementFire,
+		ElementBeast,
+		ElementFlora,
 		ElementWater,
-		ElementGrass,
-		ElementElectric,
-		ElementIce,
-		ElementFighting,
-		ElementPoison,
-		ElementGround,
-		ElementFlying,
-		ElementPsychic,
-		ElementBug,
-		ElementRock,
-		ElementGhost,
-		ElementDragon,
-		ElementDark,
-		ElementSteel,
-		ElementFairy,
+		ElementFire,
+		ElementEarth,
+		ElementAir,
+		ElementCold,
+		ElementMetal,
+		ElementVoid,
+		ElementGleam,
 	}
 }
 
 // DualType represents a unit's typing, containing a primary element and
-// an optional secondary element, mirroring Rust's `DualType(Element, Option<Element>)`.
+// an optional secondary element.
 type DualType struct {
 	Primary   Element  `json:"primary"`
 	Secondary *Element `json:"secondary,omitempty"`
@@ -235,6 +208,17 @@ func (dt DualType) Elements() []Element {
 	return []Element{dt.Primary}
 }
 
+// Contains Element reports whether the DualType contains the specified element.
+func (dt DualType) Contains(e Element) bool {
+	if dt.Primary == e {
+		return true
+	}
+	if dt.Secondary != nil && *dt.Secondary == e {
+		return true
+	}
+	return false
+}
+
 // Clone creates an independent deep copy of DualType.
 func (dt DualType) Clone() DualType {
 	if dt.Secondary == nil {
@@ -258,49 +242,141 @@ func (dt DualType) String() string {
 	return dt.Primary.String()
 }
 
-// GetMultiplier returns the elemental damage multiplier when an attack of attackType
-// hits a target of single targetType.
-//
-// Rules matching Rust src/combat.rs:
-// 1. Self-resistance: if attackType == targetType, return 0.5.
-// 2. Starter triangle advantages return 2.0:
-//    - Water vs Fire -> 2.0
-//    - Fire vs Grass -> 2.0
-//    - Grass vs Water -> 2.0
-// 3. Default: all other matchups return 1.0.
-func GetMultiplier(attackType, targetType Element) float32 {
-	if attackType == targetType {
-		return MultiplierSelfResistance
-	}
-	switch attackType {
-	case ElementWater:
-		if targetType == ElementFire {
-			return MultiplierSuperEffective
-		}
-	case ElementFire:
-		if targetType == ElementGrass {
-			return MultiplierSuperEffective
-		}
-	case ElementGrass:
-		if targetType == ElementWater {
-			return MultiplierSuperEffective
-		}
-	}
-	return MultiplierNeutral
+// -----------------------------------------------------------------------------
+// 10x10 Element Interaction Matrix
+// -----------------------------------------------------------------------------
+// Attacker is row index, Defender is column index.
+// Tiers: +1 = SUPER (↑), 0 = NORMAL (≡), -1 = LESS (↓)
+var elementInteractionMatrix = [NumElements][NumElements]int{
+	// Beast (0)
+	{1, 1, 1, 0, 0, -1, 0, -1, -1, 0},
+	// Flora (1)
+	{-1, 0, 1, -1, 1, 0, -1, 0, 0, 1},
+	// Water (2)
+	{0, -1, -1, 1, 0, -1, 1, 0, 1, 0},
+	// Fire (3)
+	{0, 1, -1, -1, 0, 0, 1, 1, 0, -1},
+	// Earth (4)
+	{0, -1, 0, 1, -1, 0, -1, 0, 1, 1},
+	// Air (5)
+	{1, 0, 1, -1, 0, 1, 0, -1, -1, 0},
+	// Cold (6)
+	{-1, 0, -1, 0, 1, 1, -1, 1, 0, 0},
+	// Metal (7)
+	{0, 0, 0, 0, 1, 0, 1, -1, -1, 0},
+	// Void (8)
+	{1, 1, 0, 1, -1, -1, 0, 0, 0, -1},
+	// Gleam (9)
+	{-1, -1, 0, 0, -1, 1, 0, 1, 1, 0},
 }
 
-// CalculateMultiplier calculates the compound damage multiplier when an attack of attackType
-// hits a target with a DualType (primary and optional secondary).
-//
-// Formula matching Rust src/combat.rs:
-// mult = GetMultiplier(attackType, targetTypes.Primary)
-// if targetTypes.Secondary != nil {
-//     mult *= GetMultiplier(attackType, *targetTypes.Secondary)
-// }
-func CalculateMultiplier(attackType Element, targetTypes DualType) float32 {
-	mult := GetMultiplier(attackType, targetTypes.Primary)
-	if targetTypes.Secondary != nil {
-		mult *= GetMultiplier(attackType, *targetTypes.Secondary)
+// GetElementTier returns the base effectiveness tier (+1, 0, or -1) when an attack of attackType
+// hits a defender of single targetType.
+func GetElementTier(attackType, targetType Element) int {
+	if !attackType.IsValid() || !targetType.IsValid() {
+		return 0
 	}
-	return mult
+	return elementInteractionMatrix[attackType][targetType]
+}
+
+// CalculateTier calculates the un-clamped combined effectiveness tier when an attack of attackType
+// hits a defender with DualType targetTypes.
+func CalculateTier(attackType Element, targetTypes DualType) int {
+	tier := GetElementTier(attackType, targetTypes.Primary)
+	if targetTypes.Secondary != nil {
+		tier += GetElementTier(attackType, *targetTypes.Secondary)
+	}
+	return tier
+}
+
+// CalculateTierWithSTAB calculates the final effectiveness tier including STAB bonus (+1 if attacker has matching type),
+// clamped to the range [-2, +3] (LEAST to ULTRA).
+func CalculateTierWithSTAB(attackType Element, attackerTypes DualType, targetTypes DualType) int {
+	tier := CalculateTier(attackType, targetTypes)
+	if attackerTypes.Contains(attackType) {
+		tier += 1
+	}
+	// Clamp to range [-2, +3]
+	if tier < -2 {
+		tier = -2
+	}
+	if tier > 3 {
+		tier = 3
+	}
+	return tier
+}
+
+// TierToString returns the symbolic string representation of a tier ("↓↓", "↓", "≡", "↑", "↑↑", "↑↑↑").
+func TierToString(tier int) string {
+	switch {
+	case tier <= -2:
+		return "↓↓"
+	case tier == -1:
+		return "↓"
+	case tier == 0:
+		return "≡"
+	case tier == 1:
+		return "↑"
+	case tier == 2:
+		return "↑↑"
+	default:
+		return "↑↑↑"
+	}
+}
+
+// TierToName returns the English name of a tier ("LEAST", "LESS", "NORMAL", "SUPER", "MEGA", "ULTRA").
+func TierToName(tier int) string {
+	switch {
+	case tier <= -2:
+		return "LEAST"
+	case tier == -1:
+		return "LESS"
+	case tier == 0:
+		return "NORMAL"
+	case tier == 1:
+		return "SUPER"
+	case tier == 2:
+		return "MEGA"
+	default:
+		return "ULTRA"
+	}
+}
+
+// TierToMultiplier returns the numeric damage multiplier for a given effectiveness tier:
+// LEAST (<= -2) -> 0.25x
+// LESS  (-1)    -> 0.5x
+// NORMAL (0)    -> 1.0x
+// SUPER (+1)    -> 2.0x
+// MEGA  (+2)    -> 4.0x
+// ULTRA (>= +3) -> 8.0x
+func TierToMultiplier(tier int) float32 {
+	switch {
+	case tier <= -2:
+		return 0.25
+	case tier == -1:
+		return 0.5
+	case tier == 0:
+		return 1.0
+	case tier == 1:
+		return 2.0
+	case tier == 2:
+		return 4.0
+	default:
+		return 8.0
+	}
+}
+
+// GetMultiplier returns the damage multiplier for a single elemental matchup.
+func GetMultiplier(attackType, targetType Element) float32 {
+	return TierToMultiplier(GetElementTier(attackType, targetType))
+}
+
+// CalculateMultiplier returns the compound damage multiplier for an attack against a DualType.
+func CalculateMultiplier(attackType Element, targetTypes DualType) float32 {
+	return TierToMultiplier(CalculateTier(attackType, targetTypes))
+}
+
+// CalculateMultiplierWithSTAB returns the compound damage multiplier including STAB.
+func CalculateMultiplierWithSTAB(attackType Element, attackerTypes DualType, targetTypes DualType) float32 {
+	return TierToMultiplier(CalculateTierWithSTAB(attackType, attackerTypes, targetTypes))
 }

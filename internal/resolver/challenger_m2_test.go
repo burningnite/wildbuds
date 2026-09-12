@@ -412,29 +412,29 @@ func TestChallenger_Combat_ElementalMultiplierAndHPDeduction(t *testing.T) {
 		},
 		// 2. Fire -> Grass (Super Effective x2.0)
 		{
-			name:           "Fire_vs_Grass_SuperEffective",
+			name:           "Fire_vs_Flora_SuperEffective",
 			atkElement:     domain.ElementFire,
 			atkAttack:      15,
-			defPrimary:     domain.ElementGrass,
+			defPrimary:     domain.ElementFlora,
 			defStartHP:     50,
 			expectedMult:   2.0,
 			expectedDamage: 30,
 			expectedRemHP:  20,
 			expectedDefeat: false,
 		},
-		// 3. Grass -> Water (Super Effective x2.0)
+		// 3. Water -> Fire (Super Effective x2.0)
 		{
-			name:           "Grass_vs_Water_SuperEffective",
-			atkElement:     domain.ElementGrass,
+			name:           "Water_vs_Fire_SuperEffective",
+			atkElement:     domain.ElementWater,
 			atkAttack:      25,
-			defPrimary:     domain.ElementWater,
+			defPrimary:     domain.ElementFire,
 			defStartHP:     50,
 			expectedMult:   2.0,
 			expectedDamage: 50,
 			expectedRemHP:  0,
 			expectedDefeat: true,
 		},
-		// 4. Water -> Water (Self-Resistant x0.5)
+		// 4. Water -> Water (Less Effective x0.5)
 		{
 			name:           "Water_vs_Water_Resistant",
 			atkElement:     domain.ElementWater,
@@ -446,7 +446,7 @@ func TestChallenger_Combat_ElementalMultiplierAndHPDeduction(t *testing.T) {
 			expectedRemHP:  95,
 			expectedDefeat: false,
 		},
-		// 5. Fire -> Fire (Self-Resistant x0.5)
+		// 5. Fire -> Fire (Less Effective x0.5)
 		{
 			name:           "Fire_vs_Fire_Resistant",
 			atkElement:     domain.ElementFire,
@@ -458,12 +458,12 @@ func TestChallenger_Combat_ElementalMultiplierAndHPDeduction(t *testing.T) {
 			expectedRemHP:  94,
 			expectedDefeat: false,
 		},
-		// 6. Neutral Matchup: Normal -> Water (x1.0)
+		// 6. Neutral Matchup: Beast -> Earth (x1.0)
 		{
-			name:           "Normal_vs_Water_Neutral",
-			atkElement:     domain.ElementNormal,
+			name:           "Beast_vs_Earth_Neutral",
+			atkElement:     domain.ElementBeast,
 			atkAttack:      12,
-			defPrimary:     domain.ElementWater,
+			defPrimary:     domain.ElementEarth,
 			defStartHP:     100,
 			expectedMult:   1.0,
 			expectedDamage: 12,

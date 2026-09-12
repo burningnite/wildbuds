@@ -330,7 +330,7 @@ func TestResolver_SelectUnit_Reselection(t *testing.T) {
 		Position: domain.GridPosition{X: 1, Y: -3},
 		Stats:    domain.DefaultBaseStats(),
 		Tokens:   domain.DefaultActionTokens(),
-		Types:    domain.NewSingleType(domain.ElementGrass),
+		Types:    domain.NewSingleType(domain.ElementFlora),
 	}
 	state.Units = append(state.Units, unit3)
 

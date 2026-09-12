@@ -505,7 +505,7 @@ func TestSerialization_DualTypeExhaustive(t *testing.T) {
 	}
 
 	// 2. Dual type
-	dual := domain.NewDualType(domain.ElementFire, domain.ElementGrass)
+	dual := domain.NewDualType(domain.ElementFire, domain.ElementFlora)
 	dataDual, err := json.Marshal(dual)
 	if err != nil {
 		t.Fatalf("Marshal dual type error: %v", err)
@@ -516,7 +516,7 @@ func TestSerialization_DualTypeExhaustive(t *testing.T) {
 		t.Fatalf("Unmarshal dual type error: %v", err)
 	}
 	sec, ok := restoredDual.SecondaryElement()
-	if !ok || restoredDual.Primary != domain.ElementFire || sec != domain.ElementGrass {
+	if !ok || restoredDual.Primary != domain.ElementFire || sec != domain.ElementFlora {
 		t.Errorf("restored dual type mismatch: %+v", restoredDual)
 	}
 
@@ -740,7 +740,7 @@ func TestFuzz_RandomMutations(t *testing.T) {
 
 // TestStateIsolation_UnitDeepCopy verifies zero mutation leakage between cloned Units.
 func TestStateIsolation_UnitDeepCopy(t *testing.T) {
-	secOrig := domain.ElementGrass
+	secOrig := domain.ElementFlora
 	original := &domain.Unit{
 		ID:       1,
 		Owner:    domain.PlayerOne,
@@ -784,8 +784,8 @@ func TestStateIsolation_UnitDeepCopy(t *testing.T) {
 	clone.Tokens.Movement = 0
 	clone.Tokens.Attack = 0
 	clone.Tokens.Special = 5
-	clone.Types.Primary = domain.ElementDragon
-	*clone.Types.Secondary = domain.ElementElectric
+	clone.Types.Primary = domain.ElementAir
+	*clone.Types.Secondary = domain.ElementCold
 
 	// 3. Assert original is completely pristine
 	if original.ID != 1 {
@@ -806,8 +806,8 @@ func TestStateIsolation_UnitDeepCopy(t *testing.T) {
 	if original.Types.Primary != domain.ElementWater {
 		t.Errorf("original.Types.Primary mutated: got %v, want Water", original.Types.Primary)
 	}
-	if original.Types.Secondary == nil || *original.Types.Secondary != domain.ElementGrass {
-		t.Errorf("original.Types.Secondary mutated: got %v, want Grass", original.Types.Secondary)
+	if original.Types.Secondary == nil || *original.Types.Secondary != domain.ElementFlora {
+		t.Errorf("original.Types.Secondary mutated: got %v, want Flora", original.Types.Secondary)
 	}
 
 	// 4. Test setting clone.Types.Secondary to nil
@@ -825,7 +825,7 @@ func TestStateIsolation_UnitDeepCopy(t *testing.T) {
 	if singleClone.Types.Secondary != nil {
 		t.Errorf("expected singleClone.Types.Secondary == nil")
 	}
-	newSec := domain.ElementPoison
+	newSec := domain.ElementMetal
 	singleClone.Types.Secondary = &newSec
 	if singleUnit.Types.Secondary != nil {
 		t.Errorf("mutating clone's secondary element leaked to singleUnit")

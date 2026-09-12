@@ -461,7 +461,7 @@ func TestGameState_DeepCopyImmutability(t *testing.T) {
 	clone.Units[0].Position = GridPosition{X: 1, Y: 1}
 	clone.Units[0].Stats.HP = 50
 	clone.Units[0].Tokens.Movement = 0
-	sec := ElementGrass
+	sec := ElementFlora
 	clone.Units[0].Types.Secondary = &sec
 
 	// Assert original remains completely unmodified
