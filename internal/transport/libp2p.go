@@ -179,7 +179,11 @@ func (t *Libp2pTransport) setupStream(stream network.Stream, remotePeer peer.ID)
 }
 
 func (t *Libp2pTransport) readLoop(stream network.Stream, remotePlayer domain.Player) {
-	reader := bufio.NewReader(stream)
+	// 🛡️ SECURITY: Use bufio.Scanner with a limited buffer to prevent
+	// uncontrolled resource consumption (DoS) if a peer omits newlines.
+	const maxCommandSize = 8192
+	scanner := bufio.NewScanner(stream)
+	scanner.Buffer(make([]byte, 4096), maxCommandSize)
 	for {
 		select {
 		case <-t.done:
@@ -187,13 +191,13 @@ func (t *Libp2pTransport) readLoop(stream network.Stream, remotePlayer domain.Pl
 		default:
 		}
 
-		line, err := reader.ReadBytes('\n')
-		if err != nil {
+		if !scanner.Scan() {
 			t.mu.Lock()
 			t.connected = false
 			t.mu.Unlock()
 			break
 		}
+		line := scanner.Bytes()
 
 		netCmd, err := DeserializeNetworkCommand(line)
 		if err != nil {
