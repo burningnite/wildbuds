@@ -204,9 +204,9 @@ func (t *Libp2pTransport) readLoop(stream network.Stream, remotePlayer domain.Pl
 			continue
 		}
 
-		if !netCmd.Sender.IsValid() {
-			netCmd.Sender = remotePlayer
-		}
+		// 🛡️ SECURITY: Force sender identity to match the authenticated stream peer.
+		// Never trust the sender field from network payload to prevent impersonation.
+		netCmd.Sender = remotePlayer
 
 		select {
 		case t.inCh <- netCmd:
