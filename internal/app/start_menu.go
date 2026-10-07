@@ -100,6 +100,12 @@ func (s *StartMenuScene) Update() (Transition, error) {
 
 	s.langHovered = s.langButton.contains(mx, my)
 
+	if s.hoveredIdx >= 0 || s.langHovered {
+		ebiten.SetCursorShape(ebiten.CursorShapePointer)
+	} else {
+		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
+	}
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if s.langHovered {
 			log.Println("[StartMenu] Language button clicked")

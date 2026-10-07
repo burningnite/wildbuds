@@ -38,6 +38,12 @@ func (s *DebuggerScene) Update() (Transition, error) {
 	mx, my := ebiten.CursorPosition()
 	s.backHovered = s.inBackBtn(mx, my)
 
+	if s.backHovered {
+		ebiten.SetCursorShape(ebiten.CursorShapePointer)
+	} else {
+		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
+	}
+
 	if s.backHovered && inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		return Transition{NextScene: NewStartMenuScene()}, nil
 	}

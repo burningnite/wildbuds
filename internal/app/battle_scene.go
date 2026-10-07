@@ -73,6 +73,12 @@ func (s *BattleScene) Update() (Transition, error) {
 	mx, my := ebiten.CursorPosition()
 	s.backHover = s.inBackBtn(mx, my)
 
+	if s.backHover {
+		ebiten.SetCursorShape(ebiten.CursorShapePointer)
+	} else {
+		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
+	}
+
 	// Listen for ESC key or back button click
 	if ebiten.IsKeyPressed(ebiten.KeyEscape) || (s.backHover && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft)) {
 		if s.transport != nil {

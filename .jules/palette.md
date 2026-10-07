@@ -1,0 +1,3 @@
+## 2025-09-25 - Ebitengine Interactive Pointer Feedback
+**Learning:** Standard web DOM accessibility techniques (like CSS `cursor: pointer` or HTML `<button>`) do not apply in an Ebitengine native UI. Users lack affordance for interactive elements if the cursor doesn't change when hovering over clickable areas.
+**Action:** Always manually manage cursor state on interactive elements by checking hover coordinates and using `ebiten.SetCursorShape(ebiten.CursorShapePointer)` when hovered, and `ebiten.SetCursorShape(ebiten.CursorShapeDefault)` otherwise. This should ideally be evaluated at the end of each scene's `Update()` loop.

@@ -54,6 +54,12 @@ func (s *LobbyScene) Update() (Transition, error) {
 	mx, my := ebiten.CursorPosition()
 	s.backHovered = s.backButton.contains(mx, my)
 
+	if s.backHovered {
+		ebiten.SetCursorShape(ebiten.CursorShapePointer)
+	} else {
+		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
+	}
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if s.backHovered {
 			log.Println("[LobbyScene] Back button clicked")
