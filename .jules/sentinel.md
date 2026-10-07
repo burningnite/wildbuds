@@ -1,0 +1,4 @@
+## 2024-05-24 - [CRITICAL] Authoritative Resolver bypassed Action Economy
+**Vulnerability:** The Authoritative Resolver was validating syntactic constraints for `MoveUnit` and `Attack` commands, but failing to validate and deduct the sender's `ActionTokens` (movement and attack quotas).
+**Learning:** In a Command-First P2P architecture, trusting the presentation layer to restrict user actions is insufficient. If the authoritative state mutation pipeline does not enforce action economy invariants, any modified client can emit infinite actions in a single turn.
+**Prevention:** All domain limitations (like action economies, turn limits, ranges) must be authoritatively verified and enforced inside the `Resolver`, rejecting commands that exceed legitimate quotas and deliberately mutating (consuming) those resources on successful execution.

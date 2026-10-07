@@ -406,6 +406,29 @@ func TestResolver_MoveUnit_NoActiveUnit_Rejected(t *testing.T) {
 	}
 }
 
+func TestResolver_MoveUnit_NoTokens_Rejected(t *testing.T) {
+	r := resolver.New()
+	state := setupInitialState()
+
+	r.ResolveCommand(state, makeCmd(domain.PlayerOne, commands.CommandSelectUnit, domain.GridPosition{X: 0, Y: -3}, domain.GridPosition{}))
+
+	// Move Unit to (0, -2) - Consumes movement token
+	dest := domain.GridPosition{X: 0, Y: -2}
+	r.ResolveCommand(state, makeCmd(domain.PlayerOne, commands.CommandMoveUnit, domain.GridPosition{}, dest))
+
+	// Attempt to move again to (0, -1)
+	dest2 := domain.GridPosition{X: 0, Y: -1}
+	cmd := makeCmd(domain.PlayerOne, commands.CommandMoveUnit, domain.GridPosition{}, dest2)
+	events := r.ResolveCommand(state, cmd)
+
+	if len(events) != 1 || events[0].Type != resolver.EventCommandRejected {
+		t.Fatalf("expected rejection when moving without movement tokens")
+	}
+	if events[0].Reason != resolver.ReasonNoMovementTokens {
+		t.Errorf("expected reason %q, got %q", resolver.ReasonNoMovementTokens, events[0].Reason)
+	}
+}
+
 func TestResolver_MoveUnit_OccupiedTile_Rejected(t *testing.T) {
 	r := resolver.New()
 	state := setupInitialState()
@@ -559,6 +582,27 @@ func TestResolver_Attack_NoActiveUnit_Rejected(t *testing.T) {
 	}
 }
 
+func TestResolver_Attack_NoTokens_Rejected(t *testing.T) {
+	r := resolver.New()
+	state := setupInitialState()
+
+	r.ResolveCommand(state, makeCmd(domain.PlayerOne, commands.CommandSelectUnit, domain.GridPosition{X: 0, Y: -3}, domain.GridPosition{}))
+
+	// Attack Unit 2 at (0, 3) - Consumes attack token
+	r.ResolveCommand(state, makeCmd(domain.PlayerOne, commands.CommandAttack, domain.GridPosition{X: 0, Y: 3}, domain.GridPosition{}))
+
+	// Attempt to attack again
+	cmd := makeCmd(domain.PlayerOne, commands.CommandAttack, domain.GridPosition{X: 0, Y: 3}, domain.GridPosition{})
+	events := r.ResolveCommand(state, cmd)
+
+	if len(events) != 1 || events[0].Type != resolver.EventCommandRejected {
+		t.Fatalf("expected rejection when attacking without attack tokens")
+	}
+	if events[0].Reason != resolver.ReasonNoAttackTokens {
+		t.Errorf("expected reason %q, got %q", resolver.ReasonNoAttackTokens, events[0].Reason)
+	}
+}
+
 func TestResolver_Attack_EmptyTile_Rejected(t *testing.T) {
 	r := resolver.New()
 	state := setupInitialState()
@@ -648,6 +692,12 @@ func TestResolver_EndActivation_Success(t *testing.T) {
 	if state.Phase != domain.PhaseSelectUnit {
 		t.Errorf("Phase should be SelectUnit, got %s", state.Phase)
 	}
+	// Unit 1's tokens should be restored.
+	unit1 := state.GetUnit(1)
+	if !unit1.Tokens.CanMove() || !unit1.Tokens.CanAttack() {
+		t.Errorf("expected unit 1 tokens to be refreshed, got %+v", unit1.Tokens)
+	}
+
 	if err := state.Validate(); err != nil {
 		t.Fatalf("state validation failed: %v", err)
 	}

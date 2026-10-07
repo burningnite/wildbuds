@@ -20,6 +20,8 @@ const (
 	ReasonDestinationOccupied  = "destination tile is occupied by another unit"
 	ReasonCannotAttackFriendly = "cannot attack friendly unit"
 	ReasonUnknownCommand       = "unknown or unsupported command type"
+	ReasonNoMovementTokens     = "unit has no movement tokens remaining"
+	ReasonNoAttackTokens       = "unit has no attack tokens remaining"
 )
 
 // CombatHook defines the pluggable signature for resolving attacks between two units.
@@ -157,6 +159,10 @@ func (r *Resolver) resolveMoveUnit(state *domain.GameState, cmd commands.Network
 		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonActiveUnitNotOwned)}
 	}
 
+	if !activeUnit.Tokens.CanMove() {
+		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonNoMovementTokens)}
+	}
+
 	dest := cmd.Command.Destination
 	if !dest.IsWithinBounds() {
 		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonDestOutOfBounds)}
@@ -171,6 +177,7 @@ func (r *Resolver) resolveMoveUnit(state *domain.GameState, cmd commands.Network
 	// State Mutation
 	fromPos := activeUnit.Position
 	activeUnit.Position = dest
+	activeUnit.Tokens.Movement--
 
 	return []Event{NewUnitMovedEvent(activeUnit.ID, cmd.Sender, fromPos, dest)}
 }
@@ -190,6 +197,10 @@ func (r *Resolver) resolveAttack(state *domain.GameState, cmd commands.NetworkCo
 		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonActiveUnitNotOwned)}
 	}
 
+	if !activeUnit.Tokens.CanAttack() {
+		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonNoAttackTokens)}
+	}
+
 	targetPos := cmd.Command.Target
 	if !targetPos.IsWithinBounds() {
 		return []Event{NewCommandRejectedEvent(cmd.Sender, cmd.Command, ReasonTargetOutOfBounds)}
@@ -207,7 +218,8 @@ func (r *Resolver) resolveAttack(state *domain.GameState, cmd commands.NetworkCo
 	// Combat Calculation
 	damage, mult := r.combatHook(activeUnit, targetUnit)
 
-	// State Mutation: Deduct HP
+	// State Mutation: Deduct HP and Consume Token
+	activeUnit.Tokens.Attack--
 	if damage >= targetUnit.Stats.HP {
 		targetUnit.Stats.HP = 0
 	} else {
@@ -242,6 +254,12 @@ func (r *Resolver) resolveEndActivation(state *domain.GameState, cmd commands.Ne
 	nextPlayer := prevPlayer.Next()
 
 	// State Mutation
+	if state.ActiveUnitID != nil {
+		if activeUnit := state.GetActiveUnit(); activeUnit != nil {
+			activeUnit.Tokens = domain.DefaultActionTokens()
+		}
+	}
+
 	state.ClearActiveUnit()
 	state.ActivePlayer = nextPlayer
 	state.Phase = domain.PhaseSelectUnit

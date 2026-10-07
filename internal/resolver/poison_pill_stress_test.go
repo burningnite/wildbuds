@@ -147,12 +147,12 @@ func TestAdversarial_PoisonPill_ComprehensiveInterleavedScript(t *testing.T) {
 			expectReject: false,
 		},
 
-		// Poison 14: Move to occupied tile again (0, 3)
+		// Poison 14: Move without tokens (0, 3)
 		{
 			name:         "Poison_MoveToOccupiedAgain",
 			cmd:          commands.NewNetworkCommand(domain.PlayerOne, commands.NewMoveUnitCommand(domain.GridPosition{X: 0, Y: 3})),
 			expectReject: true,
-			rejectReason: resolver.ReasonDestinationOccupied,
+			rejectReason: resolver.ReasonNoMovementTokens,
 		},
 
 		// Valid Step 3: Attack Unit 2 at (0, 3)
