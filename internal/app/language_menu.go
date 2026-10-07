@@ -103,6 +103,12 @@ func (s *LanguageScene) Update() (Transition, error) {
 
 	s.backHover = s.backBtn.contains(mx, my)
 
+	if s.hoveredIdx >= 0 || s.backHover {
+		ebiten.SetCursorShape(ebiten.CursorShapePointer)
+	} else {
+		ebiten.SetCursorShape(ebiten.CursorShapeDefault)
+	}
+
 	if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
 		if s.hoveredIdx >= 0 {
 			clicked := s.buttons[s.hoveredIdx].label
