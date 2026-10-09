@@ -179,6 +179,8 @@ func (t *Libp2pTransport) setupStream(stream network.Stream, remotePeer peer.ID)
 }
 
 func (t *Libp2pTransport) readLoop(stream network.Stream, remotePlayer domain.Player) {
+	defer stream.Close()
+
 	// 🛡️ SECURITY: Use bufio.Scanner with a limited buffer to prevent
 	// uncontrolled resource consumption (DoS) if a peer omits newlines.
 	const maxCommandSize = 8192
@@ -207,6 +209,11 @@ func (t *Libp2pTransport) readLoop(stream network.Stream, remotePlayer domain.Pl
 		// 🛡️ SECURITY: Force sender identity to match the authenticated stream peer.
 		// Never trust the sender field from network payload to prevent impersonation.
 		netCmd.Sender = remotePlayer
+
+		// 🛡️ SECURITY: Validate command structure and bounds before admitting it to the channel.
+		if err := netCmd.Validate(); err != nil {
+			continue
+		}
 
 		select {
 		case t.inCh <- netCmd:
