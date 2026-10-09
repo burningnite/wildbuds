@@ -7,3 +7,8 @@
 **Vulnerability:** The P2P transport layer (`readLoop` in `internal/transport/libp2p.go`) trusted the `Sender` field from the incoming JSON payload. A malicious peer could forge a `NetworkCommand` with the victim's player ID, effectively hijacking the victim's units and taking turns on their behalf.
 **Learning:** Never trust identity or authorization claims from client payloads in a peer-to-peer network. Identity must be securely established at the transport/connection level.
 **Prevention:** Always forcefully overwrite the `Sender` field of incoming commands with the securely authenticated identity of the peer on that connection, completely ignoring any identity claimed in the payload itself.
+
+## 2024-05-18 - Missing stream cleanup in libp2p readLoop and missing input validation
+**Vulnerability:** The libp2p `readLoop` function did not clean up `stream` correctly using `defer stream.Close()`, leading to a potential resource leak / Denial of Service. In addition, the loop parsed network inputs into a command but skipped validating the command using `.Validate()`.
+**Learning:** Network streams must be closed reliably regardless of how the loop exits. All inputs from untrusted peers must be thoroughly validated at the transport boundary before being admitted to internal queues.
+**Prevention:** Always use `defer` for stream cleanup in Go. Validate struct boundaries and constraints on all network inputs as soon as they are deserialized.
